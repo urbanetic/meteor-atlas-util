@@ -8,7 +8,7 @@ getGeoPoint = (callback) ->
   requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
     callback(GeoPoint)
 
-@WKT =
+WKT =
 
   polygonFromVertices: (vertices, callback) ->
     getWKT (wkt) ->
