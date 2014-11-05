@@ -5,8 +5,7 @@ getGeoPoint = (callback) ->
 WKT =
 
   getWKT: (callback) ->
-    requirejs ['atlas/util/WKT'], (WKT) ->
-      callback(WKT.getInstance())
+    requirejs ['atlas/util/WKT'], (WKT) -> callback(WKT.getInstance())
 
   polygonFromVertices: (vertices, callback) ->
     @getWKT (wkt) ->
@@ -56,5 +55,5 @@ WKT =
       if coords.length == 0
         df.resolve(null)
       else
-        method coords, (wkt) -> df.resolve(wkt)
+        method.call(@, coords, (wkt) -> df.resolve(wkt))
     df.promise
