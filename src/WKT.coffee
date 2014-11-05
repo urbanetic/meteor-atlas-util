@@ -1,23 +1,21 @@
-toGeoPoint = ->
-
-getWKT = (callback) ->
-  requirejs ['atlas/util/WKT'], (WKT) ->
-    callback(WKT.getInstance())
-
 getGeoPoint = (callback) ->
   requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
     callback(GeoPoint)
 
 WKT =
 
+  getWKT: (callback) ->
+    requirejs ['atlas/util/WKT'], (WKT) ->
+      callback(WKT.getInstance())
+
   polygonFromVertices: (vertices, callback) ->
-    getWKT (wkt) ->
+    @getWKT (wkt) ->
       polygon = wkt.openLayersPolygonFromGeoPoints(vertices)
       wktString = wkt.parser.extractGeometry(polygon)
       callback(wktString)
 
   polylineFromVertices: (vertices, callback) ->
-    getWKT (wkt) ->
+    @getWKT (wkt) ->
       polyline = wkt.openLayersPolylineFromGeoPoints(vertices)
       wktString = wkt.parser.extractGeometry(polyline)
       callback(wktString)
