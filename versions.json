@@ -9,6 +9,10 @@
       "2.1.15"
     ],
     [
+      "aramk:utility",
+      "0.2.1"
+    ],
+    [
       "base64",
       "1.0.1"
     ],
@@ -71,6 +75,10 @@
     [
       "reactive-var",
       "1.0.3"
+    ],
+    [
+      "stevezhu:lodash",
+      "0.2.0"
     ],
     [
       "templating",

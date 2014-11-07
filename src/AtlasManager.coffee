@@ -7,9 +7,7 @@ resetAtlas()
 
 AtlasManager =
 
-  getAtlas: ->
-    console.log('getting atlas', atlas)
-    atlasDf.promise
+  getAtlas: -> atlasDf.promise
 
   setAtlas: (_instance) ->
     if atlas

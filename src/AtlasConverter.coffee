@@ -58,8 +58,11 @@ class AtlasConverter
   toColor: (color) -> new Colour(color)
 
   # TODO(aramk) Remove once c3ml color is refactored.
-  c3mlColorToColor: (color) ->
-    new Colour(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
+  colorFromC3mlColor: (color) ->
+    if Types.isArray(color)
+      new Colour(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
+    else
+      new Colour(color)
 
 _.extend(AtlasConverter, {
 
