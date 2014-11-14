@@ -8,7 +8,7 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@0.9.0');
   api.use(['coffeescript', 'underscore', 'aramk:requirejs@2.1.15', 'aramk:utility@0.3.0',
-    'aramk:q@1.0.1', 'urbanetic:atlas@0.7.0-beta', 'urbanetic:atlas-cesium0.7.0-beta'],
+    'aramk:q@1.0.1', 'urbanetic:atlas@0.7.0-beta', 'urbanetic:atlas-cesium@0.7.0-beta'],
     ['client', 'server']);
   api.use(['deps', 'templating', 'jquery'], 'client');
   api.export([

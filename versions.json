@@ -94,11 +94,11 @@
     ],
     [
       "urbanetic:atlas",
-      "0.1.0"
+      "0.7.0-beta"
     ],
     [
       "urbanetic:atlas-cesium",
-      "0.1.0"
+      "0.7.0-beta"
     ]
   ],
   "pluginDependencies": [],
