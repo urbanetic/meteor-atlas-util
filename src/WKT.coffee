@@ -19,6 +19,18 @@ WKT =
       wktString = wkt.parser.extractGeometry(polyline)
       callback(wktString)
 
+  featureToWkt: (feature, callback) ->
+    displayMode = feature.getDisplayMode()
+    if displayMode == 'polygon'
+      wktMethod = @polygonFromVertices
+    else if displayMode == 'line'
+      wktMethod = @polylineFromVertices
+    else
+      df = Q.defer()
+      df.resolve(null)
+      return df.promise
+    wktMethod.call(@, feature.getVertices(), callback)
+
   fromFile: (fileId, args) ->
     df = Q.defer()
     Assets.toC3ml(fileId, args).then(
