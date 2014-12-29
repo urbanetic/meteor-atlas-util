@@ -1,5 +1,5 @@
 # AMD modules.
-WKT = Style = Colour = null
+WKT = Style = Color = null
 
 class AtlasConverter
 
@@ -8,61 +8,50 @@ class AtlasConverter
       show: true
     }, args)
     vertices = args.vertices
-    height = args.height ? 20
-    width = args.width ? 10
     elevation = args.elevation ? 0
     zIndex = args.zIndex
-    fillColor = args.fillColor
-    borderColour = args.borderColor
-    # TODO(aramk) Enable opacity in atlas-cesium.
-    opacity = args.opacity
-    borderOpacity = args.borderOpacity ? 1
     geometry =
       vertices: vertices
       elevation: elevation
-      height: height
-      width: width
       zIndex: zIndex
 
     # Vertices
     wkt = WKT.getInstance()
     if wkt.isPolygon(vertices)
+      height = args.height ? 10
       geoEntity.polygon = geometry
       geoEntity.displayMode ?= if height > 0 || elevation > 0 then 'extrusion' else 'footprint'
+      geometry.height = height
     else if wkt.isLineString vertices
       geoEntity.line = geometry
+      geometry.width = args.width ? 10
+      # Height can be set on features only if the form is a polygon.
+      delete geoEntity.height
     else if vertices != null
       console.warn('Unknown type of vertices', args)
-
+    
     # Style
-    styleArgs = {}
-    if fillColor
-      _.extend(styleArgs, this.toAtlasStyleArgs(fillColor, opacity, 'fill'))
-    if borderColour
-      _.extend(styleArgs, this.toAtlasStyleArgs(borderColour, borderOpacity, 'border'))
-    defaultStyle = Style.getDefault()
-    geometry.style = new Style(_.defaults(styleArgs, {
-      fillColour: defaultStyle.getFillColour()
-      borderColour: defaultStyle.getBorderColour()
-      borderWidth: defaultStyle.getBorderWidth()
-    }))
+    style = args.style
+    if style
+      geometry.style = args.style
+    
     geoEntity
 
-  toAtlasStyleArgs: (colour, opacity, prefix) ->
+  toAtlasStyleArgs: (color, opacity, prefix) ->
     styleArgs = {}
-    styleArgs[prefix + 'Colour'] = new Colour(colour)
+    styleArgs[prefix + 'Color'] = new Color(color)
     if opacity != undefined
-      styleArgs[prefix + 'Colour'].alpha = opacity
+      styleArgs[prefix + 'Color'].alpha = opacity
     styleArgs
 
-  toColor: (color) -> new Colour(color)
+  toColor: (color) -> new Color(color)
 
   # TODO(aramk) Remove once c3ml color is refactored.
   colorFromC3mlColor: (color) ->
     if Types.isArray(color)
-      new Colour(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
+      new Color(color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255)
     else
-      new Colour(color)
+      new Color(color)
 
 _.extend(AtlasConverter, {
 
@@ -73,12 +62,12 @@ _.extend(AtlasConverter, {
     # Load requirements when requesting instance.
     requirejs [
       'atlas/util/WKT'
-      'atlas/model/Style'
-      'atlas/model/Colour'
-    ], (_WKT, _Style, _Colour) ->
+      'atlas/material/Style'
+      'atlas/material/Color'
+    ], (_WKT, _Style, _Color) ->
       WKT = _WKT
       Style = _Style
-      Colour = _Colour
+      Color = _Color
       df.resolve()
     df.promise
 

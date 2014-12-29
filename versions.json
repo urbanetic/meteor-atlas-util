@@ -2,7 +2,7 @@
   "dependencies": [
     [
       "aramk:q",
-      "1.0.1"
+      "1.0.1_1"
     ],
     [
       "aramk:requirejs",
@@ -10,7 +10,7 @@
     ],
     [
       "aramk:utility",
-      "0.4.0"
+      "0.4.2"
     ],
     [
       "base64",
@@ -102,6 +102,6 @@
     ]
   ],
   "pluginDependencies": [],
-  "toolVersion": "meteor-tool@1.0.35",
+  "toolVersion": "meteor-tool@1.0.36",
   "format": "1.0"
 }
