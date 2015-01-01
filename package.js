@@ -17,4 +17,7 @@ Package.onUse(function(api) {
   api.addFiles([
     'src/AtlasConverter.coffee', 'src/AtlasManager.coffee', 'src/WKT.coffee'
   ], ['client', 'server']);
+  api.addFiles([
+    'src/atlas.less'
+  ], 'client');
 });
