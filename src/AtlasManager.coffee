@@ -20,16 +20,21 @@ AtlasManager =
   removeAtlas: -> resetAtlas()
 
   renderEntity: (entityArgs) ->
+    _.defaults entityArgs,
+      show: true
     id = entityArgs.id
     unless id?
       throw new Error('Rendered entity must have ID.')
-    atlas.publish 'entity/show/bulk', {features: [entityArgs]}
+    atlas.publish 'entity/create/bulk', {features: [entityArgs]}
     entity = @getEntity(id)
     entity
 
   renderEntities: (entityArgs) ->
+    _.each entityArgs, (entityArg) ->
+      _.defaults entityArg,
+        show: true
     entities = null
-    atlas.publish 'entity/show/bulk', {
+    atlas.publish 'entity/create/bulk', {
       features: entityArgs
       callback: (ids) ->
         entities = atlas._managers.entity.getByIds(ids)
@@ -40,11 +45,16 @@ AtlasManager =
 
   getEntity: (id) -> atlas._managers.entity.getById(id)
 
+  getEntities: -> atlas._managers.entity.getEntities()
+
+  getEntitiesAsJson: -> _.map @getEntities(), (entity) -> entity.toJson()
+
   getFeatures: -> atlas._managers.entity.getFeatures()
 
+  getSelectedEntityIds: -> atlas._managers.selection.getSelectionIds()
+
   getSelectedFeatureIds: ->
-    _.filter atlas._managers.selection.getSelectionIds(), (id) ->
-      atlas._managers.entity.getById(id).getForm?
+    _.filter @getSelectedEntityIds(), (id) -> atlas._managers.entity.getById(id).getForm?
 
   getSelectedLots: -> _.filter @getSelectedFeatureIds(), (id) -> Lots.findOne(id)
 
