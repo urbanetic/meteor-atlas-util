@@ -25,7 +25,7 @@ AtlasManager =
     id = entityArgs.id
     unless id?
       throw new Error('Rendered entity must have ID.')
-    atlas.publish 'entity/create/bulk', {features: [entityArgs]}
+    atlas.publish 'entity/create', entityArgs
     entity = @getEntity(id)
     entity
 
