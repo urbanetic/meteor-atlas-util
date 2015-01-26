@@ -86,10 +86,12 @@ AtlasManager =
       # TODO(aramk) Use dependency injection to prevent the need for passing manually.
       deps = someGeoEntity._bindDependencies({})
       collection = new Collection('collection-project-zoom', {entities: geoEntityIds}, deps)
-      boundingBox = collection.getBoundingBox().scale(1.5)
-      camera.zoomTo({
-        rectangle: boundingBox
-      });
+      boundingBox = collection.getBoundingBox()
+      if boundingBox
+        boundingBox.scale(1.5)
+        camera.zoomTo({
+          rectangle: boundingBox
+        })
       # Remove temporary collection but retain the entities contained within by removing them
       # from the collection first.
       _.each geoEntityIds, (id) ->

@@ -1,7 +1,3 @@
-getGeoPoint = (callback) ->
-  requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
-    callback(GeoPoint)
-
 WKT =
 
   getWKT: (callback) ->
@@ -17,6 +13,11 @@ WKT =
     @getWKT (wkt) ->
       polyline = wkt.openLayersPolylineFromGeoPoints(vertices)
       wktString = wkt.parser.extractGeometry(polyline)
+      callback(wktString)
+
+  pointFromGeoPoint: (geoPoint, callback) ->
+    @getWKT (wkt) ->
+      wktString = wkt.wktFromGeoPoint(geoPoint)
       callback(wktString)
 
   featureToWkt: (feature, callback) ->
@@ -55,17 +56,30 @@ WKT =
     getGeoPoint (GeoPoint) =>
       type = c3ml.type
       method = null
+      arg = null
       if type == 'polygon'
         method = @polygonFromVertices
+        arg = getCoords(c3ml, GeoPoint)
       else if type == 'line'
         method = @polylineFromVertices
+        arg = getCoords(c3ml, GeoPoint)
+      else if type == 'point'
+        method = @pointFromGeoPoint
+        arg = new GeoPoint({longitude: c3ml.longitude, latitude: c3ml.latitude})
       else
-        df.reject('c3ml must be polygon, not ' + type)
+        df.reject('Invalid c3ml type: ' + type)
         return
-      coords = _.map c3ml.coordinates, (coord) ->
-        new GeoPoint(longitude: coord.x, latitude: coord.y)
-      if coords.length == 0
+      unless arg
         df.resolve(null)
-      else
-        method.call(@, coords, (wkt) -> df.resolve(wkt))
+        return
+      method.call(@, arg, (wkt) -> df.resolve(wkt))
     df.promise
+
+getGeoPoint = (callback) ->
+  requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
+    callback(GeoPoint)
+
+getCoords = (c3ml, GeoPoint) ->
+  coordinates = c3ml.coordinates
+  return null if coordinates.length == 0
+  _.map coordinates, (coord) -> new GeoPoint(longitude: coord.x, latitude: coord.y)

@@ -11,7 +11,6 @@ class AtlasConverter
     elevation = args.elevation ? 0
     zIndex = args.zIndex
     geometry =
-      vertices: vertices
       elevation: elevation
       zIndex: zIndex
 
@@ -21,14 +20,19 @@ class AtlasConverter
       height = args.height ? 10
       geoEntity.polygon = geometry
       geoEntity.displayMode ?= if height > 0 || elevation > 0 then 'extrusion' else 'footprint'
+      geometry.vertices = vertices
       geometry.height = height
-    else if wkt.isLineString vertices
+    else if wkt.isLineString(vertices)
       geoEntity.line = geometry
       geometry.width = args.width ? 10
+      geometry.vertices = vertices
+      geoEntity.displayMode = 'line'
       # Height can be set on features only if the form is a polygon.
       delete geoEntity.height
-    else if vertices != null
-      console.warn('Unknown type of vertices', args)
+    else if wkt.isPoint(vertices)
+      geoEntity.point = geometry
+      geometry.position = vertices
+      geoEntity.displayMode = 'point'
     
     # Style
     style = args.style
