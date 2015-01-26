@@ -1,7 +1,7 @@
 Package.describe({
   name: 'urbanetic:atlas-util',
   summary: 'A wrapper with utilities for using Atlas in Meteor.',
-  version: '0.2.0',
+  version: '0.2.1',
   git: 'https://github.com/Urbanetic/meteor-atlas-util.git'
 });
 
