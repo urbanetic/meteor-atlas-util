@@ -66,9 +66,6 @@ WKT =
       else if type == 'point'
         method = @pointFromGeoPoint
         arg = new GeoPoint({longitude: c3ml.longitude, latitude: c3ml.latitude})
-      else
-        df.reject('Invalid c3ml type: ' + type)
-        return
       unless arg
         df.resolve(null)
         return
