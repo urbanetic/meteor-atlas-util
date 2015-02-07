@@ -22,7 +22,7 @@ class AtlasConverter
       geoEntity.displayMode ?= if height > 0 || elevation > 0 then 'extrusion' else 'footprint'
       geometry.vertices = vertices
       geometry.height = height
-    else if wkt.isLineString(vertices)
+    else if wkt.isLine(vertices)
       geoEntity.line = geometry
       geometry.width = args.width ? 10
       geometry.vertices = vertices

@@ -1,4 +1,5 @@
 atlas = atlasDf = null
+global = @
 
 resetAtlas = ->
   atlas = null
@@ -15,7 +16,7 @@ AtlasManager =
     atlas = _instance
     atlasDf.resolve(atlas)
     # Add a reference to the window for debugging.
-    window.atlas = atlas
+    global.atlas = atlas
 
   removeAtlas: -> resetAtlas()
 
@@ -40,6 +41,10 @@ AtlasManager =
         entities = atlas._managers.entity.getByIds(ids)
     }
     entities
+
+  createCollection: (id, childrenIds) ->
+    @getAtlas().then (atlas) ->
+      atlas.getManager('entity').createCollection(id, {children: childrenIds})
 
   unrenderEntity: (id) -> atlas.publish 'entity/remove', {id: id}
 
