@@ -42,9 +42,9 @@ AtlasManager =
     }
     entities
 
-  createCollection: (id, childrenIds) ->
+  createCollection: (id, args) ->
     @getAtlas().then (atlas) ->
-      atlas.getManager('entity').createCollection(id, {children: childrenIds})
+      atlas.getManager('entity').createCollection(id, args)
 
   unrenderEntity: (id) -> atlas.publish 'entity/remove', {id: id}
 
