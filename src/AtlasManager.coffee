@@ -67,9 +67,15 @@ AtlasManager =
 
   getEntitiesAt: (point) -> atlas._managers.entity.getAt(point)
 
-  showEntity: (id) -> atlas.publish 'entity/show', {id: id}
+  showEntity: (id) ->
+    isVisible = @getEntity(id).isVisible()
+    atlas.publish 'entity/show', {id: id}
+    !isVisible
 
-  hideEntity: (id) -> atlas.publish 'entity/hide', {id: id}
+  hideEntity: (id) ->
+    isVisible = @getEntity(id).isVisible()
+    atlas.publish 'entity/hide', {id: id}
+    isVisible
 
   zoomTo: (args) -> atlas.publish 'camera/zoomTo', args
 
