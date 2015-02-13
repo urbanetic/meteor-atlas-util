@@ -52,7 +52,14 @@ AtlasManager =
 
   getEntities: -> atlas._managers.entity.getEntities()
 
-  getEntitiesAsJson: -> _.map @getEntities(), (entity) -> entity.toJson()
+  getEntitiesAsJson: (ids, deep) ->
+    entities = ids && @getEntitiesByIds(ids) || @getEntities()
+    deep ?= true
+    if deep
+      _.each entities, (entity) ->
+        _.each entity.getRecursiveChildren(), (child) ->
+          entities.push(child)
+    _.map entities, (entity) -> entity.toJson()
 
   getFeatures: -> atlas._managers.entity.getFeatures()
 
