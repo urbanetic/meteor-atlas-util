@@ -20,9 +20,16 @@ AtlasManager =
 
   removeAtlas: -> resetAtlas()
 
+  _sanitizeEntity: (entityArgs) ->
+    # Don't attempt to render entities on the server since there's no view.
+    if Meteor.isServer
+      entityArgs.show = false
+    else
+      _.defaults entityArgs,
+        show: true
+
   renderEntity: (entityArgs) ->
-    _.defaults entityArgs,
-      show: true
+    @_sanitizeEntity(entityArgs)
     id = entityArgs.id
     unless id?
       throw new Error('Rendered entity must have ID.')
@@ -31,9 +38,8 @@ AtlasManager =
     entity
 
   renderEntities: (entityArgs) ->
-    _.each entityArgs, (entityArg) ->
-      _.defaults entityArg,
-        show: true
+    _.each entityArgs, (entityArg) =>
+      @_sanitizeEntity(entityArg)
     entities = null
     atlas.publish 'entity/create/bulk', {
       features: entityArgs
@@ -75,11 +81,15 @@ AtlasManager =
   getEntitiesAt: (point) -> atlas._managers.entity.getAt(point)
 
   showEntity: (id) ->
+    # Don't attempt to render entities on the server since there's no view.
+    return if Meteor.isServer
     isVisible = @getEntity(id).isVisible()
     atlas.publish 'entity/show', {id: id}
     !isVisible
 
   hideEntity: (id) ->
+    # Don't attempt to render entities on the server since there's no view.
+    return if Meteor.isServer
     isVisible = @getEntity(id).isVisible()
     atlas.publish 'entity/hide', {id: id}
     isVisible
