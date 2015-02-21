@@ -97,6 +97,7 @@ AtlasManager =
   zoomTo: (args) -> atlas.publish 'camera/zoomTo', args
 
   zoomToEntities: (ids) ->
+    df = Q.defer()
     cameraManager = atlas._managers.camera
     camera = cameraManager.getCurrentCamera()
     requirejs ['atlas/model/Collection'], (Collection) =>
@@ -125,6 +126,12 @@ AtlasManager =
       _.each geoEntityIds, (id) ->
         collection.removeEntity(id)
       collection.remove()
+      # Return whether the camera had a position to move to.
+      if boundingBox?
+        df.resolve(true)
+      else
+        df.reject('No bounding box could be formed from entities for zooming.')
+    df.promise
 
   getCurrentCamera: (args) -> atlas.publish('camera/current', args)
 
@@ -135,6 +142,11 @@ AtlasManager =
         {label: Strings.toTitleCase(value), value: value}
       df.resolve(items)
     df.promise
+
+  setDisplayMode: (displayMode, args) ->
+    @getAtlas().then (atlas) ->
+      args = _.extend({displayMode: displayMode}, args)
+      atlas.publish('entity/display-mode', args)
 
   draw: (args) -> atlas.publish('entity/draw', args)
 
