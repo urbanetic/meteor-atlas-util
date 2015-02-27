@@ -39,7 +39,7 @@ WKT =
         wktResults = {}
         wktDfs = []
         _.each result.c3mls, (c3ml) ->
-          if c3ml.type != 'polygon'
+          if sanitizeType(c3ml.type) != 'polygon'
             return
           id = c3ml.id
           wktDf = WKT.fromC3ml(c3ml).then (wkt) ->
@@ -54,7 +54,7 @@ WKT =
   fromC3ml: (c3ml) ->
     df = Q.defer()
     getGeoPoint (GeoPoint) =>
-      type = c3ml.type
+      type = sanitizeType(c3ml.type)
       method = null
       arg = null
       if type == 'polygon'
@@ -71,6 +71,8 @@ WKT =
         return
       method.call(@, arg, (wkt) -> df.resolve(wkt))
     df.promise
+
+sanitizeType = (type) -> type?.toLowerCase()
 
 getGeoPoint = (callback) ->
   requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
