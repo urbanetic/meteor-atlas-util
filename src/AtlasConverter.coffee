@@ -83,4 +83,6 @@ _.extend(AtlasConverter, {
         @_instance = new AtlasConverter()
       @_instance
 
+  sanitizeType: (type) -> type?.toLowerCase()
+
 })
