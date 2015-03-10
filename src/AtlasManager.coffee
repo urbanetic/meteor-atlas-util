@@ -33,6 +33,7 @@ AtlasManager =
     id = entityArgs.id
     unless id?
       throw new Error('Rendered entity must have ID.')
+    id = entityArgs.id = AtlasIdMap.getAtlasId(id)
     atlas.publish 'entity/create', entityArgs
     entity = @getEntity(id)
     entity
@@ -41,6 +42,7 @@ AtlasManager =
     _.each entityArgs, (entityArg) =>
       @_sanitizeEntity(entityArg)
     entities = null
+    _.each entityArgs, (entityArg) -> entityArg.id = AtlasIdMap.getAtlasId(entityArg.id)
     atlas.publish 'entity/create/bulk', {
       features: entityArgs
       callback: (ids) ->
@@ -52,9 +54,9 @@ AtlasManager =
     @getAtlas().then (atlas) ->
       atlas.getManager('entity').createCollection(id, args)
 
-  unrenderEntity: (id) -> atlas.publish 'entity/remove', {id: id}
+  unrenderEntity: (id) -> atlas.publish 'entity/remove', {id: AtlasIdMap.getAtlasId(id)}
 
-  getEntity: (id) -> atlas._managers.entity.getById(id)
+  getEntity: (id) -> atlas._managers.entity.getById(AtlasIdMap.getAtlasId(id))
 
   getEntities: -> atlas._managers.entity.getEntities()
 
@@ -69,14 +71,15 @@ AtlasManager =
 
   getFeatures: -> atlas._managers.entity.getFeatures()
 
-  getSelectedEntityIds: -> atlas._managers.selection.getSelectionIds()
+  getSelectedEntityIds: ->
+    _.map atlas._managers.selection.getSelectionIds(), (id) -> AtlasIdMap.getAppId(id)
 
   getSelectedFeatureIds: ->
-    _.filter @getSelectedEntityIds(), (id) -> atlas._managers.entity.getById(id).getForm?
+    _.filter @getSelectedEntityIds(), (id) => @getEntity(id).getForm?
 
   getSelectedLots: -> _.filter @getSelectedFeatureIds(), (id) -> Lots.findOne(id)
 
-  getEntitiesByIds: (ids) -> atlas._managers.entity.getByIds(ids)
+  getEntitiesByIds: (ids) -> _.map ids, (id) => @getEntity(id)
 
   getEntitiesAt: (point) -> atlas._managers.entity.getAt(point)
 
@@ -84,14 +87,14 @@ AtlasManager =
     # Don't attempt to render entities on the server since there's no view.
     return if Meteor.isServer
     isVisible = @getEntity(id).isVisible()
-    atlas.publish 'entity/show', {id: id}
+    atlas.publish 'entity/show', {id: AtlasIdMap.getAtlasId(id)}
     !isVisible
 
   hideEntity: (id) ->
     # Don't attempt to render entities on the server since there's no view.
     return if Meteor.isServer
     isVisible = @getEntity(id).isVisible()
-    atlas.publish 'entity/hide', {id: id}
+    atlas.publish 'entity/hide', {id: AtlasIdMap.getAtlasId(id)}
     isVisible
 
   zoomTo: (args) -> atlas.publish 'camera/zoomTo', args
@@ -108,7 +111,7 @@ AtlasManager =
         if geoEntity?
           unless someGeoEntity
             someGeoEntity = geoEntity
-          geoEntityIds.push(id)
+          geoEntityIds.push(geoEntity.getId())
       unless someGeoEntity?
         return Q.reject('No entities to zoom into.')
       # TODO(aramk) Use dependency injection to prevent the need for passing manually.
@@ -155,9 +158,13 @@ AtlasManager =
 
   stopEdit: -> atlas.publish('edit/disable')
 
-  selectEntities: (ids) -> atlas.publish('entity/select', {ids: ids})
+  selectEntities: (ids) ->
+    ids = _.map ids, (id) -> AtlasIdMap.getAtlasId(id)
+    atlas.publish('entity/select', {ids: ids})
 
-  deselectEntities: (ids) -> atlas.publish('entity/deselect', {ids: ids})
+  deselectEntities: (ids) ->
+    ids = _.map ids, (id) -> AtlasIdMap.getAtlasId(id)
+    atlas.publish('entity/deselect', {ids: ids})
 
   deselectAllEntities: -> atlas._managers.selection.clearSelection()
 

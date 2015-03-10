@@ -12,10 +12,11 @@ Package.onUse(function(api) {
     ['client', 'server']);
   api.use(['deps', 'less', 'templating', 'jquery'], 'client');
   api.export([
-    'AtlasConverter', 'AtlasManager', 'WKT'
+    'AtlasIdMap', 'AtlasConverter', 'AtlasManager', 'WKT'
   ], ['client', 'server']);
   api.addFiles([
-    'src/AtlasConverter.coffee', 'src/AtlasManager.coffee', 'src/WKT.coffee'
+    'src/AtlasIdMap.coffee', 'src/AtlasConverter.coffee', 'src/AtlasManager.coffee',
+    'src/WKT.coffee'
   ], ['client', 'server']);
   api.addFiles([
     'src/atlas.less'
