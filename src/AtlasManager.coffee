@@ -33,7 +33,7 @@ AtlasManager =
     id = entityArgs.id
     unless id?
       throw new Error('Rendered entity must have ID.')
-    id = entityArgs.id = AtlasIdMap.getAtlasId(id)
+    entityArgs.id = AtlasIdMap.getAtlasId(id)
     atlas.publish 'entity/create', entityArgs
     entity = @getEntity(id)
     entity
@@ -72,16 +72,27 @@ AtlasManager =
   getFeatures: -> atlas._managers.entity.getFeatures()
 
   getSelectedEntityIds: ->
-    _.map atlas._managers.selection.getSelectionIds(), (id) -> AtlasIdMap.getAppId(id)
+    ids = []
+    _.each atlas._managers.selection.getSelectionIds(), (id) ->
+      id = AtlasIdMap.getAppId(id)
+      ids.push(id) if id?
+    ids
 
   getSelectedFeatureIds: ->
     _.filter @getSelectedEntityIds(), (id) => @getEntity(id).getForm?
 
-  getSelectedLots: -> _.filter @getSelectedFeatureIds(), (id) -> Lots.findOne(id)
-
   getEntitiesByIds: (ids) -> _.map ids, (id) => @getEntity(id)
 
   getEntitiesAt: (point) -> atlas._managers.entity.getAt(point)
+
+  resolveModelId: (id) ->
+    # When clicking on children of a GeoEntity collection, take the prefix as the ID of the
+    # underlying Entity.
+    reChildEntityId = /(^[^:]+):[^:]+$/
+    idParts = id.match(reChildEntityId)
+    if idParts
+      id = idParts[1]
+    AtlasIdMap.getAppId(id)
 
   showEntity: (id) ->
     # Don't attempt to render entities on the server since there's no view.
@@ -158,13 +169,9 @@ AtlasManager =
 
   stopEdit: -> atlas.publish('edit/disable')
 
-  selectEntities: (ids) ->
-    ids = _.map ids, (id) -> AtlasIdMap.getAtlasId(id)
-    atlas.publish('entity/select', {ids: ids})
+  selectEntities: (ids) -> atlas.publish('entity/select', {ids: AtlasIdMap.getAtlasIds(ids)})
 
-  deselectEntities: (ids) ->
-    ids = _.map ids, (id) -> AtlasIdMap.getAtlasId(id)
-    atlas.publish('entity/deselect', {ids: ids})
+  deselectEntities: (ids) -> atlas.publish('entity/deselect', {ids: AtlasIdMap.getAtlasIds(ids)})
 
   deselectAllEntities: -> atlas._managers.selection.clearSelection()
 
