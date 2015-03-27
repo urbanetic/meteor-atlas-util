@@ -4,7 +4,6 @@ WKT = Style = Color = null
 class AtlasConverter
 
   toGeoEntityArgs: (args) ->
-    # args.id = AtlasIdMap.getAtlasId(args.id)
     geoEntity = _.extend({
       show: true
     }, args)

@@ -3,12 +3,16 @@ global = @
 
 resetAtlas = ->
   atlas = null
+  if atlasDf
+    atlasDf.reject('Reset atlas')
   atlasDf = Q.defer()
 resetAtlas()
 
 AtlasManager =
 
   getAtlas: -> atlasDf.promise
+
+  hasAtlas: -> atlas?
 
   setAtlas: (_instance) ->
     if atlas
@@ -92,6 +96,7 @@ AtlasManager =
     idParts = id.match(reChildEntityId)
     if idParts
       id = idParts[1]
+    id = id.replace(/polygon$/, '')
     AtlasIdMap.getAppId(id)
 
   showEntity: (id) ->
