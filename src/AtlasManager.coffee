@@ -129,7 +129,8 @@ AtlasManager =
             someGeoEntity = geoEntity
           geoEntityIds.push(geoEntity.getId())
       unless someGeoEntity?
-        return Q.reject('No entities to zoom into.')
+        df.reject('No entities to zoom into.')
+        return
       # TODO(aramk) Use dependency injection to prevent the need for passing manually.
       deps = someGeoEntity._bindDependencies({})
       collection = new Collection('collection-project-zoom', {entities: geoEntityIds}, deps)
