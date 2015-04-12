@@ -8,8 +8,9 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@0.9.0');
   api.use(['coffeescript', 'underscore', 'aramk:requirejs@2.1.15', 'aramk:utility@0.5.0',
-    'aramk:q@1.0.1', 'urbanetic:atlas@0.7.0_4', 'urbanetic:atlas-cesium@0.7.0_4'],
+    'aramk:q@1.0.1', 'urbanetic:atlas@0.8.0'],
     ['client', 'server']);
+  api.use(['urbanetic:atlas-cesium@0.8.0'], ['client', 'server'], {weak: true});
   api.use(['deps', 'less', 'templating', 'jquery'], 'client');
   api.export([
     'AtlasIdMap', 'AtlasConverter', 'AtlasManager', 'WKT'
