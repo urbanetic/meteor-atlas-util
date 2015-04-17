@@ -154,6 +154,10 @@ AtlasManager =
 
   getCurrentCamera: (args) -> atlas.publish('camera/current', args)
 
+  zoomIn: (args) -> atlas.publish('camera/zoomIn', args)
+
+  zoomOut: (args) -> atlas.publish('camera/zoomOut', args)
+
   getDisplayModes: ->
     df = Q.defer()
     requirejs ['atlas/model/Feature'], (Feature) ->
