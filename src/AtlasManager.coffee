@@ -43,20 +43,22 @@ AtlasManager =
     entity
 
   renderEntities: (entityArgs) ->
+    df = Q.defer()
     _.each entityArgs, (entityArg) =>
       @_sanitizeEntity(entityArg)
     entities = null
     _.each entityArgs, (entityArg) -> entityArg.id = AtlasIdMap.getAtlasId(entityArg.id)
     atlas.publish 'entity/create/bulk', {
       features: entityArgs
-      callback: (ids) ->
-        entities = atlas._managers.entity.getByIds(ids)
+      callback: (promise) ->
+        promise.then(
+          (ids) -> df.resolve(atlas._managers.entity.getByIds(ids))
+          df.reject
+        )
     }
-    entities
+    df.promise
 
-  createCollection: (id, args) ->
-    @getAtlas().then (atlas) ->
-      atlas.getManager('entity').createCollection(id, args)
+  createCollection: (id, args) -> atlas.getManager('entity').createCollection(id, args)
 
   unrenderEntity: (id) -> atlas.publish 'entity/remove', {id: AtlasIdMap.getAtlasId(id)}
 
