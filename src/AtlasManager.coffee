@@ -46,16 +46,14 @@ AtlasManager =
     df = Q.defer()
     _.each entityArgs, (entityArg) =>
       @_sanitizeEntity(entityArg)
-    entities = null
-    _.each entityArgs, (entityArg) -> entityArg.id = AtlasIdMap.getAtlasId(entityArg.id)
-    atlas.publish 'entity/create/bulk', {
+      entityArg.id = AtlasIdMap.getAtlasId(entityArg.id)
+    atlas.publish 'entity/create/bulk',
       features: entityArgs
       callback: (promise) ->
         promise.then(
           (ids) -> df.resolve(atlas._managers.entity.getByIds(ids))
           df.reject
         )
-    }
     df.promise
 
   createCollection: (id, args) -> atlas.getManager('entity').createCollection(id, args)
@@ -155,6 +153,10 @@ AtlasManager =
     df.promise
 
   getCurrentCamera: (args) -> atlas.publish('camera/current', args)
+
+  zoomIn: (args) -> atlas.publish('camera/zoomIn', args)
+
+  zoomOut: (args) -> atlas.publish('camera/zoomOut', args)
 
   getDisplayModes: ->
     df = Q.defer()
