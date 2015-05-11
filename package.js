@@ -7,19 +7,40 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@0.9.0');
-  api.use(['coffeescript', 'underscore', 'aramk:requirejs@2.1.15', 'aramk:utility@0.5.0',
-    'aramk:q@1.0.1', 'urbanetic:atlas@0.8.1'],
-    ['client', 'server']);
-  api.use(['urbanetic:atlas-cesium@0.8.1'], ['client', 'server'], {weak: true});
-  api.use(['deps', 'less', 'templating', 'jquery'], 'client');
+  api.use([
+    'coffeescript',
+    'underscore',
+    'aramk:requirejs@2.1.15',
+    'aramk:utility@0.5.0',
+    'aramk:q@1.0.1',
+    'urbanetic:atlas@0.8.1'
+  ], ['client', 'server']);
+  api.use([
+    'urbanetic:atlas-cesium@0.8.1'
+  ], ['client', 'server'], {weak: true});
+  api.use(['deps',
+    'less',
+    'templating',
+    'jquery'
+  ], 'client');
   api.export([
-    'AtlasIdMap', 'AtlasConverter', 'AtlasManager', 'WKT'
+    'AtlasIdMap',
+    'AtlasConverter',
+    'AtlasManager',
+    'GeometryUtils',
+    'WKT'
   ], ['client', 'server']);
   api.addFiles([
-    'src/AtlasIdMap.coffee', 'src/AtlasConverter.coffee', 'src/AtlasManager.coffee',
+    'src/AtlasIdMap.coffee',
+    'src/AtlasConverter.coffee',
+    'src/AtlasManager.coffee',
+    'src/GeometryUtils.coffee',
     'src/WKT.coffee'
   ], ['client', 'server']);
   api.addFiles([
     'src/atlas.less'
   ], 'client');
+  api.addFiles([
+    'src/server.coffee'
+  ], 'server');
 });
