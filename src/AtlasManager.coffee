@@ -73,6 +73,8 @@ AtlasManager =
           entities.push(child)
     _.map entities, (entity) -> entity.toJson()
 
+  getFeature: (id) -> atlas._managers.entity._getFeaturesByIds([id])[0]
+
   getFeatures: -> atlas._managers.entity.getFeatures()
 
   getSelectedEntityIds: ->
@@ -118,30 +120,22 @@ AtlasManager =
     cameraManager = atlas._managers.camera
     camera = cameraManager.getCurrentCamera()
     requirejs ['atlas/model/Collection'], (Collection) =>
-      someGeoEntity = null
       geoEntityIds = []
       _.each ids, (id) =>
         geoEntity = @getEntity(id)
-        if geoEntity?
-          unless someGeoEntity
-            someGeoEntity = geoEntity
-          geoEntityIds.push(geoEntity.getId())
-      unless someGeoEntity?
+        if geoEntity? then geoEntityIds.push(geoEntity.getId())
+      unless geoEntityIds.length > 0
         df.reject('No entities to zoom into.')
         return
-      # TODO(aramk) Use dependency injection to prevent the need for passing manually.
-      deps = someGeoEntity._bindDependencies({})
-      collection = new Collection('collection-project-zoom', {entities: geoEntityIds}, deps)
+      collection = @createCollection('collection-project-zoom', {entities: geoEntityIds})
       boundingBox = collection.getBoundingBox()
       if boundingBox
         boundingBox.scale(1.5)
-        camera.zoomTo({
+        camera.zoomTo
           rectangle: boundingBox
-        })
       # Remove temporary collection but retain the entities contained within by removing them
       # from the collection first.
-      _.each geoEntityIds, (id) ->
-        collection.removeEntity(id)
+      _.each geoEntityIds, (id) -> collection.removeEntity(id)
       collection.remove()
       # Return whether the camera had a position to move to.
       if boundingBox?
