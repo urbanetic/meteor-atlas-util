@@ -49,6 +49,7 @@ AtlasManager =
       entityArg.id = AtlasIdMap.getAtlasId(entityArg.id)
     atlas.publish 'entity/create/bulk',
       features: entityArgs
+      callbackPromise: true
       callback: (promise) ->
         promise.then(
           (ids) -> df.resolve(atlas._managers.entity.getByIds(ids))

@@ -65,7 +65,7 @@ WKT =
         arg = getCoords(c3ml, GeoPoint)
       else if type == 'point'
         method = @pointFromGeoPoint
-        arg = new GeoPoint({longitude: c3ml.longitude, latitude: c3ml.latitude})
+        arg = getCoords(c3ml, GeoPoint)[0]
       unless arg
         df.resolve(null)
         return
