@@ -51,10 +51,9 @@ AtlasManager =
       features: entityArgs
       callbackPromise: true
       callback: (promise) ->
-        promise.then(
-          (ids) -> df.resolve(atlas._managers.entity.getByIds(ids))
-          df.reject
-        )
+        entitiesPromise = promise.then (ids) -> atlas._managers.entity.getByIds(ids)
+        # Allows notifying of progress through the original promise.
+        df.resolve(entitiesPromise)
     df.promise
 
   createCollection: (id, args) -> atlas.getManager('entity').createCollection(id, args)
@@ -164,7 +163,7 @@ AtlasManager =
       args = _.extend({displayMode: displayMode}, args)
       atlas.publish('entity/display-mode', args)
 
-  draw: (args) -> atlas.publish('entity/draw', args)
+  startDraw: (args) -> atlas.publish('entity/draw', args)
 
   stopDraw: (args) -> atlas.publish('entity/draw/stop', args)
 
