@@ -130,7 +130,9 @@ AtlasManager =
       collection = @createCollection('collection-project-zoom', {entities: geoEntityIds})
       readyPromise = collection.ready()
       readyPromise.then ->
-        boundingBox = collection.getBoundingBox()
+        # For more than 300 entities, use the centroids for better performance.
+        args = {useCentroid: geoEntityIds.length > 300}
+        boundingBox = collection.getBoundingBox(args)
         if boundingBox
           boundingBox.scale(1.5)
           camera.zoomTo
