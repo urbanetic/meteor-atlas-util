@@ -128,20 +128,23 @@ AtlasManager =
         df.reject('No entities to zoom into.')
         return
       collection = @createCollection('collection-project-zoom', {entities: geoEntityIds})
-      boundingBox = collection.getBoundingBox()
-      if boundingBox
-        boundingBox.scale(1.5)
-        camera.zoomTo
-          rectangle: boundingBox
-      # Remove temporary collection but retain the entities contained within by removing them
-      # from the collection first.
-      _.each geoEntityIds, (id) -> collection.removeEntity(id)
-      collection.remove()
-      # Return whether the camera had a position to move to.
-      if boundingBox?
-        df.resolve(true)
-      else
-        df.reject('No bounding box could be formed from entities for zooming.')
+      readyPromise = collection.ready()
+      readyPromise.then ->
+        boundingBox = collection.getBoundingBox()
+        if boundingBox
+          boundingBox.scale(1.5)
+          camera.zoomTo
+            rectangle: boundingBox
+        # Remove temporary collection but retain the entities contained within by removing them
+        # from the collection first.
+        _.each geoEntityIds, (id) -> collection.removeEntity(id)
+        collection.remove()
+        # Return whether the camera had a position to move to.
+        if boundingBox?
+          df.resolve(true)
+        else
+          df.reject('No bounding box could be formed from entities for zooming.')
+      readyPromise.fail(df.reject)
     df.promise
 
   getCurrentCamera: (args) -> atlas.publish('camera/current', args)
