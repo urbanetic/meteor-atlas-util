@@ -54,22 +54,26 @@ WKT =
   fromC3ml: (c3ml) ->
     df = Q.defer()
     getGeoPoint (GeoPoint) =>
-      type = AtlasConverter.sanitizeType(c3ml.type)
-      method = null
-      arg = null
-      if type == 'polygon'
-        method = @polygonFromVertices
-        arg = getCoords(c3ml, GeoPoint)
-      else if type == 'line'
-        method = @polylineFromVertices
-        arg = getCoords(c3ml, GeoPoint)
-      else if type == 'point'
-        method = @pointFromGeoPoint
-        arg = getCoords(c3ml, GeoPoint)[0]
-      unless arg
+      try
+        type = AtlasConverter.sanitizeType(c3ml.type)
+        method = null
+        arg = null
+        if type == 'polygon'
+          method = @polygonFromVertices
+          arg = getCoords(c3ml, GeoPoint)
+        else if type == 'line'
+          method = @polylineFromVertices
+          arg = getCoords(c3ml, GeoPoint)
+        else if type == 'point'
+          method = @pointFromGeoPoint
+          arg = getCoords(c3ml, GeoPoint)[0]
+        unless arg
+          df.resolve(null)
+          return
+        method.call @, arg, (wkt) -> df.resolve(wkt)
+      catch e
+        Logger.error(e)
         df.resolve(null)
-        return
-      method.call(@, arg, (wkt) -> df.resolve(wkt))
     df.promise
 
 getGeoPoint = (callback) ->
