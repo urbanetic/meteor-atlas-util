@@ -131,8 +131,8 @@ AtlasManager =
       readyPromise = collection.ready()
       readyPromise.then ->
         # For more than 300 entities, use the centroids for better performance.
-        args = {useCentroid: geoEntityIds.length > 300}
-        boundingBox = collection.getBoundingBox(args)
+        boundingBox = collection.getBoundingBox
+          useCentroid: geoEntityIds.length > 300
         if boundingBox
           boundingBox.scale(1.5)
           camera.zoomTo
