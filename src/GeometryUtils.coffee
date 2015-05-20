@@ -80,7 +80,7 @@ GeometryUtils =
     df = Q.defer()
     geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
     if geom_2d
-      WKT.getWKT (wkt) -> df.resolve(wkt.isWKT(geom_2d))
+      WKT.getWKT bindMeteor (wkt) -> df.resolve(wkt.isWKT(geom_2d))
     else
       df.resolve(false)
     df.promise
