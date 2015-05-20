@@ -33,7 +33,7 @@ GeometryUtils =
         promise.then(df.resolve, df.reject)
     else
       df.resolve(null)
-    df.promisef
+    df.promise
 
   buildGeometryFromFile: (fileId, args) ->
     args = _.extend({
