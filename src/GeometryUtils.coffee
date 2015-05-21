@@ -50,6 +50,7 @@ GeometryUtils =
   buildGeometryFromC3ml: (doc, args) ->
     args = _.extend({
       show: true
+      groupSelect: true
     }, args)
     collectionId = args.collectionId
     unless collectionId?
@@ -69,7 +70,12 @@ GeometryUtils =
       AtlasManager.renderEntities(c3mls).then(
         (c3mlEntities) ->
           ids = _.map c3mlEntities, (c3mlEntity) -> c3mlEntity.getId()
-          df.resolve(AtlasManager.createCollection(collectionId, {children: ids}))
+          collectionArgs = {children: ids}
+          style = args.style
+          if style? then collectionArgs.style = style
+          groupSelect = args.groupSelect
+          if groupSelect? then collectionArgs.groupSelect = groupSelect
+          df.resolve(AtlasManager.createCollection(collectionId, collectionArgs))
         (err) ->
           Logger.error('Error when rendering entities', err)
           df.reject(err)
@@ -96,3 +102,12 @@ GeometryUtils =
   toUtmVertices: (vertexedEntity) ->
     _.map vertexedEntity.getVertices(), (point) -> point.toUtm().coord
 
+  getWktOrC3mls: (geom_2d) ->
+    df = Q.defer()
+    WKT.getWKT bindMeteor (wkt) =>
+      isWKT = wkt.isWKT(geom_2d)
+      if isWKT
+        df.resolve(geom_2d)
+      else
+        df.resolve(Files.downloadJson(geom_2d))
+    df.promise
