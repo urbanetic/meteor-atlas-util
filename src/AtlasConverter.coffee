@@ -1,5 +1,5 @@
 # AMD modules.
-WKT = Style = Color = null
+AtlasWKT = Style = Color = null
 
 class AtlasConverter
 
@@ -15,7 +15,7 @@ class AtlasConverter
       zIndex: zIndex
 
     # Vertices
-    wkt = WKT.getInstance()
+    wkt = AtlasWKT.getInstance()
     if wkt.isPolygon(vertices)
       height = args.height ? 10
       geoEntity.polygon = geometry
@@ -71,7 +71,7 @@ _.extend(AtlasConverter, {
       'atlas/material/Style'
       'atlas/material/Color'
     ], (_WKT, _Style, _Color) ->
-      WKT = _WKT
+      AtlasWKT = _WKT
       Style = _Style
       Color = _Color
       df.resolve()
