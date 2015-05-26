@@ -111,3 +111,31 @@ GeometryUtils =
       else
         df.resolve(Files.downloadJson(geom_2d))
     df.promise
+
+  # @param {atlas.model.GeoPoint} origin - A GeoPoint coordinate for the origin of the measurement.
+  # @param {atlas.model.Vertex} offset - A UTM coordinate measuring the offset from the given
+  #     origin.
+  # @returns {Promise.<Object>} results - A promise containing the UTM and GeoPoint coordinates.
+  # @returns {Object} results.utmOrigin
+  # @returns {atlas.model.Vertex} results.utmTargetCoord
+  # @returns {atlas.model.GeoPoint} results.geoTarget
+  # @returns {atlas.model.GeoPoint} results.geoDiff
+  getUtmOffsetGeoPoint: (origin, offset) ->
+    df = Q.defer()
+    requirejs [
+      'atlas/model/GeoPoint'
+      'atlas/model/Vertex'
+      'utm-converter'
+    ], (GeoPoint, Vertex, UtmConverter) ->
+      converter = new UtmConverter()
+      utmOrigin = converter.toUtm(coord: origin)
+      utmOriginCoord = new Vertex(utmOrigin.coord)
+      utmTargetCoord = utmOriginCoord.translate(offset)
+      geoTarget = GeoPoint.fromUtm(_.defaults(coord: utmTargetCoord, utmOrigin))
+      geoDiff = geoTarget.subtract(origin)
+      df.resolve
+        utmOrigin: utmOrigin
+        utmTargetCoord: utmTargetCoord
+        geoTarget: geoTarget
+        geoDiff: geoDiff
+    df.promise
