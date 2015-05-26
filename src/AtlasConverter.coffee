@@ -60,9 +60,11 @@ class AtlasConverter
 _.extend(AtlasConverter, {
 
   _instance: null
+  _readyDf: null
 
   ready: ->
-    df = Q.defer()
+    return @_readyDf.promise if @_readyDf?
+    df = @_readyDf = Q.defer()
     # Load requirements when requesting instance.
     requirejs [
       'atlas/util/WKT'
