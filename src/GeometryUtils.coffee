@@ -1,5 +1,3 @@
-bindMeteor = Meteor.bindEnvironment.bind(Meteor)
-
 GeometryUtils =
 
   # Deferred promises to prevent multiple requests for area for the same model interfering when they
@@ -18,13 +16,13 @@ GeometryUtils =
 
     geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
     if geom_2d
-      @hasWktGeometry(model).then bindMeteor (isWKT) =>
+      @hasWktGeometry(model).then Meteor.bindEnvironment (isWKT) =>
         if isWKT
           promise = @getWktArea(geom_2d)
         else
           # Create a temporary geometry and check the area.
           promise = @buildGeometryFromFile(geom_2d, {collectionId: id, show: false}).then(
-            bindMeteor (geometry) =>
+            Meteor.bindEnvironment (geometry) =>
               area = geometry.getArea()
               geometry.remove()
               df.resolve(area)
@@ -42,8 +40,8 @@ GeometryUtils =
     }, args)
     collectionId = args.collectionId
     df = Q.defer()
-    requirejs ['atlas/model/GeoPoint'], bindMeteor (GeoPoint) =>
-      Files.downloadJson(fileId).then bindMeteor (result) =>
+    requirejs ['atlas/model/GeoPoint'], Meteor.bindEnvironment (GeoPoint) =>
+      Files.downloadJson(fileId).then Meteor.bindEnvironment (result) =>
         df.resolve(@buildGeometryFromC3ml(result, args))
     df.promise
 
@@ -55,7 +53,7 @@ GeometryUtils =
     unless collectionId?
       return Q.reject('No collection ID provided.')
     df = Q.defer()
-    requirejs ['atlas/model/GeoPoint'], bindMeteor (GeoPoint) ->
+    requirejs ['atlas/model/GeoPoint'], Meteor.bindEnvironment (GeoPoint) ->
       unless doc
         df.resolve(null)
         return
@@ -80,14 +78,14 @@ GeometryUtils =
     df = Q.defer()
     geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
     if geom_2d
-      WKT.getWKT bindMeteor (wkt) -> df.resolve(wkt.isWKT(geom_2d))
+      WKT.getWKT Meteor.bindEnvironment (wkt) -> df.resolve(wkt.isWKT(geom_2d))
     else
       df.resolve(false)
     df.promise
 
   getWktArea: (wktStr) ->
     df = Q.defer()
-    WKT.getWKT bindMeteor (wkt) ->
+    WKT.getWKT Meteor.bindEnvironment (wkt) ->
       # TODO(aramk) This is inaccurate - use UTM 
       geometry = wkt.openLayersGeometryFromWKT(wktStr)
       df.resolve(geometry.getGeodesicArea())
