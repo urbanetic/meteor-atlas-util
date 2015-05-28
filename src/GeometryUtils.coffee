@@ -102,7 +102,7 @@ GeometryUtils =
 
   getWktOrC3mls: (geom_2d) ->
     df = Q.defer()
-    WKT.getWKT bindMeteor (wkt) =>
+    WKT.getWKT Meteor.bindEnvironment (wkt) =>
       isWKT = wkt.isWKT(geom_2d)
       if isWKT
         df.resolve(geom_2d)
