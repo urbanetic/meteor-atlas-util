@@ -72,7 +72,7 @@ WKT =
           return
         method.call @, arg, (wkt) -> df.resolve(wkt)
       catch e
-        Logger.error(e)
+        Logger.error('Error when parsing C3ML into WKT', e, e.stack)
         df.resolve(null)
     df.promise
 
@@ -83,4 +83,4 @@ getGeoPoint = (callback) ->
 getCoords = (c3ml, GeoPoint) ->
   coordinates = c3ml.coordinates
   return null if coordinates.length == 0
-  _.map coordinates, (coord) -> new GeoPoint(longitude: coord.x, latitude: coord.y)
+  _.map coordinates, (coord) -> new GeoPoint(coord)
