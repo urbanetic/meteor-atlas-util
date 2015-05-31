@@ -59,8 +59,10 @@ WKT =
         method = null
         arg = null
         if type == 'polygon'
-          method = @polygonFromVertices
-          arg = getCoords(c3ml, GeoPoint)
+          rings = []
+          rings.push createCoords(c3ml.coordinates, Vertex)
+          _.each c3ml.holes, (hole) -> rings.push createCoords(hole, Vertex)
+          @getWKT (wkt) -> df.resolve(wkt.wktFromVerticesAndHoles(rings))
         else if type == 'line'
           method = @polylineFromVertices
           arg = getCoords(c3ml, GeoPoint)
@@ -70,7 +72,7 @@ WKT =
         unless arg
           df.resolve(null)
           return
-        method.call @, arg, (wkt) -> df.resolve(wkt)
+        if method then method.call @, arg, (wkt) -> df.resolve(wkt)
       catch e
         Logger.error('Error when parsing C3ML into WKT', e, e.stack)
         df.resolve(null)
@@ -81,6 +83,8 @@ getGeoPoint = (callback) ->
     callback(GeoPoint)
 
 getCoords = (c3ml, GeoPoint) ->
-  coordinates = c3ml.coordinates
-  return null if coordinates.length == 0
-  _.map coordinates, (coord) -> new GeoPoint(coord)
+  coords = c3ml.coordinates
+  return null if coords.length == 0
+  createCoords(coords, GeoPoint)
+
+createCoords = (coords, Constructor) -> _.map coords, (coord) -> new Constructor(coord)
