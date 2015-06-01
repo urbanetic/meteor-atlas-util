@@ -99,6 +99,7 @@ AtlasManager =
     if idParts
       id = idParts[1]
     id = id.replace(/polygon$/, '')
+    id = id.replace(/mesh$/, '')
     AtlasIdMap.getAppId(id)
 
   showEntity: (id) ->
