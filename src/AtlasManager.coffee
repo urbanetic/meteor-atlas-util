@@ -58,7 +58,7 @@ AtlasManager =
 
   createCollection: (id, args) -> atlas.getManager('entity').createCollection(id, args)
 
-  unrenderEntity: (id) -> atlas.publish 'entity/remove', {id: AtlasIdMap.getAtlasId(id)}
+  unrenderEntity: (id) -> @getEntity(id)?.remove()
 
   getEntity: (id) -> atlas._managers.entity.getById(AtlasIdMap.getAtlasId(id))
 
