@@ -63,8 +63,8 @@ WKT =
         arg = null
         if type == 'polygon'
           rings = []
-          rings.push createCoords(c3ml.coordinates, Vertex)
-          _.each c3ml.holes, (hole) -> rings.push createCoords(hole, Vertex)
+          rings.push geoPointsToVertices createCoords(c3ml.coordinates, GeoPoint)
+          _.each c3ml.holes, (hole) -> rings.push geoPointsToVertices createCoords(hole, GeoPoint)
           @getWKT (wkt) -> df.resolve wkt.wktFromVerticesAndHoles(rings)
         else if type == 'line'
           method = @polylineFromVertices
@@ -87,3 +87,6 @@ getCoords = (c3ml, GeoPoint) ->
   createCoords(coords, GeoPoint)
 
 createCoords = (coords, Constructor) -> _.map coords, (coord) -> new Constructor(coord)
+
+geoPointsToVertices = (points) -> _.map points, (point) -> point.toVertex()
+
