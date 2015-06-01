@@ -53,7 +53,10 @@ WKT =
 
   fromC3ml: (c3ml) ->
     df = Q.defer()
-    getGeoPoint (GeoPoint) =>
+    requirejs [
+      'atlas/model/GeoPoint'
+      'atlas/model/Vertex'
+    ], (GeoPoint, Vertex) =>
       try
         type = AtlasConverter.sanitizeType(c3ml.type)
         method = null
@@ -62,14 +65,14 @@ WKT =
           rings = []
           rings.push createCoords(c3ml.coordinates, Vertex)
           _.each c3ml.holes, (hole) -> rings.push createCoords(hole, Vertex)
-          @getWKT (wkt) -> df.resolve(wkt.wktFromVerticesAndHoles(rings))
+          @getWKT (wkt) -> df.resolve wkt.wktFromVerticesAndHoles(rings)
         else if type == 'line'
           method = @polylineFromVertices
           arg = getCoords(c3ml, GeoPoint)
         else if type == 'point'
           method = @pointFromGeoPoint
           arg = getCoords(c3ml, GeoPoint)[0]
-        unless arg
+        else
           df.resolve(null)
           return
         if method then method.call @, arg, (wkt) -> df.resolve(wkt)
@@ -77,10 +80,6 @@ WKT =
         Logger.error('Error when parsing C3ML into WKT', e, e.stack)
         df.resolve(null)
     df.promise
-
-getGeoPoint = (callback) ->
-  requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
-    callback(GeoPoint)
 
 getCoords = (c3ml, GeoPoint) ->
   coords = c3ml.coordinates
