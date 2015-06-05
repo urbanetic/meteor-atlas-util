@@ -56,7 +56,9 @@ AtlasManager =
         df.resolve(entitiesPromise)
     df.promise
 
-  createCollection: (id, args) -> atlas.getManager('entity').createCollection(id, args)
+  createCollection: (id, args) ->
+    args = @_sanitizeEntity(args)
+    atlas.getManager('entity').createCollection(id, args)
 
   unrenderEntity: (id) -> @getEntity(id)?.remove()
 
