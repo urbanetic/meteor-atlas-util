@@ -57,7 +57,9 @@ AtlasManager =
     df.promise
 
   createCollection: (id, args) ->
-    args = @_sanitizeEntity(args)
+    # TODO(aramk) Calling @_sanitizeEntity(args) sets `show` to false and this prevents any children
+    # from being added to the collection.
+    # args = @_sanitizeEntity(args)
     atlas.getManager('entity').createCollection(id, args)
 
   unrenderEntity: (id) -> @getEntity(id)?.remove()
