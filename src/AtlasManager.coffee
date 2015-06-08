@@ -181,9 +181,11 @@ AtlasManager =
 
   stopEdit: -> atlas.publish('edit/disable')
 
-  selectEntities: (ids) -> atlas.publish('entity/select', {ids: AtlasIdMap.getAtlasIds(ids)})
+  selectEntities: (ids) ->
+    atlas.publish 'entity/select', {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}
 
-  deselectEntities: (ids) -> atlas.publish('entity/deselect', {ids: AtlasIdMap.getAtlasIds(ids)})
+  deselectEntities: (ids) ->
+    atlas.publish 'entity/deselect', {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}
 
   deselectAllEntities: -> atlas._managers.selection.clearSelection()
 
