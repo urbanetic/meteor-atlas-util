@@ -186,3 +186,8 @@ AtlasManager =
   setSelection: (ids) ->
     @deselectAllEntities()
     @selectEntities(ids)
+
+  setSelectionEnabled: (enable) ->
+    unless enable
+      @deselectAllEntities()
+    atlas._managers.selection.setEnabled(enable)
