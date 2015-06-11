@@ -73,7 +73,7 @@ GeometryUtils =
           if style? then collectionArgs.style = style
           groupSelect = args.groupSelect
           if groupSelect? then collectionArgs.groupSelect = groupSelect
-          df.resolve(AtlasManager.createCollection(collectionId, collectionArgs))
+          df.resolve AtlasManager.createCollection(collectionId, collectionArgs)
         (err) ->
           Logger.error('Error when rendering entities', err)
           df.reject(err)

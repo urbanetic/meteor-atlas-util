@@ -56,7 +56,11 @@ AtlasManager =
         df.resolve(entitiesPromise)
     df.promise
 
-  createCollection: (id, args) -> atlas.getManager('entity').createCollection(id, args)
+  createCollection: (id, args) ->
+    # TODO(aramk) Calling @_sanitizeEntity(args) sets `show` to false and this prevents any children
+    # from being added to the collection.
+    # args = @_sanitizeEntity(args)
+    atlas.getManager('entity').createCollection(id, args)
 
   unrenderEntity: (id) -> @getEntity(id)?.remove()
 
@@ -177,9 +181,11 @@ AtlasManager =
 
   stopEdit: -> atlas.publish('edit/disable')
 
-  selectEntities: (ids) -> atlas.publish('entity/select', {ids: AtlasIdMap.getAtlasIds(ids)})
+  selectEntities: (ids) ->
+    atlas.publish 'entity/select', {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}
 
-  deselectEntities: (ids) -> atlas.publish('entity/deselect', {ids: AtlasIdMap.getAtlasIds(ids)})
+  deselectEntities: (ids) ->
+    atlas.publish 'entity/deselect', {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}
 
   deselectAllEntities: -> atlas._managers.selection.clearSelection()
 
