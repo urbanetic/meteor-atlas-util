@@ -34,8 +34,8 @@ Package.onUse(function(api) {
     'src/AtlasIdMap.coffee',
     'src/AtlasConverter.coffee',
     'src/AtlasManager.coffee',
-    'src/GeometryUtils.coffee',
-    'src/WKT.coffee'
+    'src/WKT.coffee',
+    'src/GeometryUtils.coffee'
   ], ['client', 'server']);
   api.addFiles([
     'src/atlas.less'

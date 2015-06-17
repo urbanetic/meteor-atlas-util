@@ -16,18 +16,18 @@ GeometryUtils =
 
     geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
     if geom_2d
-      @hasWktGeometry(model).then Meteor.bindEnvironment (isWKT) =>
-        if isWKT
-          promise = @getWktArea(geom_2d)
-        else
-          # Create a temporary geometry and check the area.
-          promise = @buildGeometryFromFile(geom_2d, {collectionId: id, show: false}).then(
-            Meteor.bindEnvironment (geometry) =>
-              area = geometry.getArea()
-              geometry.remove()
-              df.resolve(area)
-            df.reject
-          )
+      isWKT = @hasWktGeometry(model)
+      if isWKT
+        promise = Q.when @getWktArea(geom_2d)
+      else
+        # Create a temporary geometry and check the area.
+        promise = @buildGeometryFromFile(geom_2d, {collectionId: id, show: false}).then(
+          Meteor.bindEnvironment (geometry) =>
+            area = geometry.getArea()
+            geometry.remove()
+            df.resolve(area)
+          df.reject
+        )
         promise.then(df.resolve, df.reject)
     else
       df.resolve(null)
@@ -80,35 +80,8 @@ GeometryUtils =
       )
     df.promise
 
-  hasWktGeometry: (model) ->
-    df = Q.defer()
-    geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
-    if geom_2d
-      WKT.getWKT Meteor.bindEnvironment (wkt) -> df.resolve(wkt.isWKT(geom_2d))
-    else
-      df.resolve(false)
-    df.promise
-
-  getWktArea: (wktStr) ->
-    df = Q.defer()
-    WKT.getWKT Meteor.bindEnvironment (wkt) ->
-      # TODO(aramk) This is inaccurate - use UTM 
-      geometry = wkt.openLayersGeometryFromWKT(wktStr)
-      df.resolve(geometry.getGeodesicArea())
-    df.promise
-
   toUtmVertices: (vertexedEntity) ->
     _.map vertexedEntity.getVertices(), (point) -> point.toUtm().coord
-
-  getWktOrC3mls: (geom_2d) ->
-    df = Q.defer()
-    WKT.getWKT Meteor.bindEnvironment (wkt) =>
-      isWKT = wkt.isWKT(geom_2d)
-      if isWKT
-        df.resolve(geom_2d)
-      else
-        df.resolve(Files.downloadJson(geom_2d))
-    df.promise
 
   # @param {atlas.model.GeoPoint} origin - A GeoPoint coordinate for the origin of the measurement.
   # @param {atlas.model.Vertex} offset - A UTM coordinate measuring the offset from the given
@@ -137,3 +110,19 @@ GeometryUtils =
         geoTarget: geoTarget
         geoDiff: geoDiff
     df.promise
+
+WKT.getWKT Meteor.bindEnvironment (wkt) ->
+  _.extend GeometryUtils,
+
+    hasWktGeometry: (model) ->
+      geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
+      if geom_2d then wkt.isWKT(geom_2d) else false
+
+    getWktArea: (wktStr) ->
+      # TODO(aramk) This is inaccurate - use UTM 
+      geometry = wkt.openLayersGeometryFromWKT(wktStr)
+      geometry.getGeodesicArea()
+
+    getWktOrC3mls: (geom_2d) ->
+      isWKT = wkt.isWKT(geom_2d)
+      if isWKT then geom_2d else Files.downloadJson(geom_2d)
