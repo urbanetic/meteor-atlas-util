@@ -2,10 +2,11 @@ atlas = atlasDf = null
 global = @
 
 resetAtlas = ->
+  atlas?.destroy()
   atlas = null
-  if atlasDf
-    atlasDf.reject('Reset atlas')
+  if atlasDf then atlasDf.reject('Atlas reset')
   atlasDf = Q.defer()
+
 resetAtlas()
 
 AtlasManager =
