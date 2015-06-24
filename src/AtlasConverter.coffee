@@ -4,15 +4,25 @@ AtlasWKT = Style = Color = null
 class AtlasConverter
 
   toGeoEntityArgs: (args) ->
-    geoEntity = _.extend({
-      show: true
-    }, args)
     vertices = args.vertices
     elevation = args.elevation ? 0
     zIndex = args.zIndex
     geometry =
       elevation: elevation
       zIndex: zIndex
+
+    # Style
+    style = args.style
+    if style then geometry.style = args.style
+    
+    delete args.vertices
+    delete args.elevation
+    delete args.zIndex
+    delete args.style
+    
+    geoEntity = _.extend({
+      show: true
+    }, args)
 
     # Vertices
     wkt = AtlasWKT.getInstance()
@@ -33,11 +43,6 @@ class AtlasConverter
       geoEntity.point = geometry
       geometry.position = vertices
       geoEntity.displayMode = 'point'
-    
-    # Style
-    style = args.style
-    if style
-      geometry.style = args.style
     
     geoEntity
 
