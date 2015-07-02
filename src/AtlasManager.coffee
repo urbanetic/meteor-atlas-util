@@ -4,6 +4,7 @@ global = @
 resetAtlas = ->
   atlas?.destroy()
   atlas = null
+  delete global.atlas
   if atlasDf then atlasDf.reject('Atlas reset')
   atlasDf = Q.defer()
 
@@ -19,9 +20,9 @@ AtlasManager =
     if atlas
       throw new Error('Atlas is already set - remove it first.')
     atlas = _instance
-    atlasDf.resolve(atlas)
     # Add a reference to the window for debugging.
     global.atlas = atlas
+    atlasDf.resolve(atlas)
 
   removeAtlas: -> resetAtlas()
 
