@@ -164,17 +164,19 @@ AtlasManager =
 
   stopEdit: -> atlas.publish('edit/disable')
 
-  selectEntities: (ids) ->
-    atlas.publish 'entity/select', {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}
+  selectEntities: (ids, args) ->
+    args = Setter.merge {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}, args
+    atlas.publish 'entity/select', args
 
-  deselectEntities: (ids) ->
-    atlas.publish 'entity/deselect', {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}
+  deselectEntities: (ids, args) ->
+    args = Setter.merge {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}, args
+    atlas.publish 'entity/deselect', args
 
   deselectAllEntities: -> atlas._managers.selection.clearSelection()
 
-  setSelection: (ids) ->
+  setSelection: (ids, args) ->
     @deselectAllEntities()
-    @selectEntities(ids)
+    @selectEntities(ids, args)
 
   setSelectionEnabled: (enable) ->
     unless enable
