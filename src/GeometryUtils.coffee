@@ -119,9 +119,11 @@ WKT.getWKT Meteor.bindEnvironment (wkt) ->
       if geom_2d then wkt.isWKT(geom_2d) else false
 
     getWktArea: (wktStr) ->
-      # TODO(aramk) This is inaccurate - use UTM 
+      # TODO(aramk) This is inaccurate - use UTM
       geometry = wkt.openLayersGeometryFromWKT(wktStr)
       geometry.getGeodesicArea()
+
+    getWktCentroid: (wktStr) -> wkt.openLayersGeometryFromWKT(wktStr).getCentroid()
 
     getWktOrC3mls: (geom_2d) ->
       isWKT = wkt.isWKT(geom_2d)
