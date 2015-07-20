@@ -2,7 +2,10 @@ atlas = atlasDf = null
 global = @
 
 resetAtlas = ->
-  atlas?.destroy()
+  try
+    atlas?.destroy()
+  catch err
+    Logger.error('Error when removing Atlas', err, {notify: false})
   atlas = null
   delete global.atlas
   if atlasDf then atlasDf.reject('Atlas reset')
