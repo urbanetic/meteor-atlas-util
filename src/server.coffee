@@ -4,6 +4,8 @@ Meteor.startup ->
   requirejs [
     'atlas/core/Atlas'
   ], (Atlas) ->
-    atlas = new Atlas()
+    atlas = new Atlas
+      managers:
+        overlay: false
     AtlasManager.setAtlas(atlas)
     Logger.info('Created Atlas')
