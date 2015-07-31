@@ -175,13 +175,12 @@ AtlasManager =
     args = Setter.merge {ids: AtlasIdMap.getAtlasIds(ids), keepSelection: true}, args
     atlas.publish 'entity/deselect', args
 
-  deselectAllEntities: -> atlas._managers.selection.clearSelection()
+  deselectAllEntities: (args) -> atlas.publish 'entity/deselect/all', args
 
   setSelection: (ids, args) ->
-    @deselectAllEntities()
+    @deselectAllEntities(args)
     @selectEntities(ids, args)
 
-  setSelectionEnabled: (enable) ->
-    unless enable
-      @deselectAllEntities()
+  setSelectionEnabled: (enable, args) ->
+    unless enable then @deselectAllEntities(args)
     atlas._managers.selection.setEnabled(enable)
