@@ -114,14 +114,18 @@ AtlasManager =
   showEntity: (id) ->
     # Don't attempt to render entities on the server since there's no view.
     return false if Meteor.isServer
-    atlas.publish 'entity/show', {id: AtlasIdMap.getAtlasId(id)}
-    @getEntity(id).isVisible()
+    id = AtlasIdMap.getAtlasId(id)
+    return false unless id?
+    atlas.publish 'entity/show', id: id
+    @getEntity(id)?.isVisible() ? false
 
   hideEntity: (id) ->
     # Don't attempt to render entities on the server since there's no view.
     return false if Meteor.isServer
-    atlas.publish 'entity/hide', {id: AtlasIdMap.getAtlasId(id)}
-    !@getEntity(id).isVisible()
+    id = AtlasIdMap.getAtlasId(id)
+    return false unless id?
+    atlas.publish 'entity/hide', id: id
+    !@getEntity(id)?.isVisible() ? false
 
   zoomTo: (args) -> atlas.publish 'camera/zoomTo', args
 
