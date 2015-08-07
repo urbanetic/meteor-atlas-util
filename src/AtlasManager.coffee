@@ -127,6 +127,10 @@ AtlasManager =
     atlas.publish 'entity/hide', id: id
     !@getEntity(id)?.isVisible() ? false
 
+  hideEntities: (ids) ->
+    return false if Meteor.isServer or not ids?.length
+    atlas.publish 'entity/hide/bulk', ids: ids
+
   zoomTo: (args) -> atlas.publish 'camera/zoomTo', args
 
   zoomToEntities: (ids) ->
