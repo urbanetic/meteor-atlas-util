@@ -47,18 +47,20 @@ AtlasManager =
     entity = @getEntity(id)
     entity
 
-  renderEntities: (entityArgs) ->
+  renderEntities: (c3mls, args) ->
     df = Q.defer()
-    _.each entityArgs, (entityArg) =>
-      @_sanitizeEntity(entityArg)
-      entityArg.id = AtlasIdMap.getAtlasId(entityArg.id)
-    atlas.publish 'entity/create/bulk',
-      features: entityArgs
+    _.each c3mls, (c3ml) =>
+      @_sanitizeEntity(c3ml)
+      c3ml.id = AtlasIdMap.getAtlasId(c3ml.id)
+    args = Setter.merge
+      features: c3mls
       callbackPromise: true
       callback: (promise) ->
         entitiesPromise = promise.then (ids) -> atlas._managers.entity.getByIds(ids)
         # Allows notifying of progress through the original promise.
         df.resolve(entitiesPromise)
+    , args
+    atlas.publish 'entity/create/bulk', args
     df.promise
 
   createCollection: (id, args) ->
