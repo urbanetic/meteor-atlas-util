@@ -26,20 +26,38 @@ class AtlasConverter
 
     # Vertices
     wkt = AtlasWKT.getInstance()
-    if wkt.isPolygon(vertices)
+    if wkt.isWKT(vertices)
+      isPolygon = wkt.isPolygon(vertices)
+      isLine = wkt.isLine(vertices)
+      isPoint = wkt.isPoint(vertices)
+    else
+      try
+        geoJson = if Types.isString(vertices) then JSON.parse(vertices) else vertices
+        type = geoJson.type
+        isPolygon = type == 'Polygon'
+        isLine = type == 'LineString'
+        isPoint = type == 'Point'
+        if isPolygon
+          vertices = geoJson.coordinates[0]
+          holes = geoJson.coordinates.slice(1)
+        else
+          vertices = geoJson.coordinates
+
+    if isPolygon
       height = args.height ? 10
       geoEntity.polygon = geometry
       geoEntity.displayMode ?= if height > 0 || elevation > 0 then 'extrusion' else 'footprint'
       geometry.vertices = vertices
+      geometry.holes = holes if holes?
       geometry.height = height
-    else if wkt.isLine(vertices)
+    else if isLine
       geoEntity.line = geometry
       geometry.width = args.width ? 10
       geometry.vertices = vertices
       geoEntity.displayMode = 'line'
       # Height can be set on features only if the form is a polygon.
       delete geoEntity.height
-    else if wkt.isPoint(vertices)
+    else if isPoint
       geoEntity.point = geometry
       geometry.position = vertices
       geoEntity.displayMode = 'point'

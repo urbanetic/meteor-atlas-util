@@ -111,16 +111,50 @@ GeometryUtils =
         geoDiff: geoDiff
     df.promise
 
-WKT.getWKT Meteor.bindEnvironment (wkt) ->
+
+WKT.getWKT Meteor.bindEnvironment (wkt) -> requirejs ['atlas/model/GeoPoint'], (GeoPoint) ->
   _.extend GeometryUtils,
 
     hasWktGeometry: (model) ->
       geom_2d = SchemaUtils.getParameterValue(model, 'space.geom_2d')
       if geom_2d then wkt.isWKT(geom_2d) else false
 
+    getArea: (str) ->
+      if wkt.isWKT(str)
+        @getWktArea(str)
+      else
+        try
+          geometry = JSON.parse(str)
+          @getGeoJsonArea(geometry)
+        catch err
+          Logger.error('Error parsing GeoJSON in getArea()', err)
+
     getWktArea: (wktStr) ->
       # TODO(aramk) This is inaccurate - use UTM
       geometry = wkt.openLayersGeometryFromWKT(wktStr)
+      geometry.getGeodesicArea()
+
+    getGeoJsonArea: (geometry) ->
+      type = geometry.type
+      coords = geometry.coordinates
+      if type == 'Polygon'
+        @getGeoJsonPolygonCoordsArea(coords)
+      else if type == 'MultiPolygon'
+        area = 0
+        _.each coords, (polys) => area += @getGeoJsonPolygonCoordsArea(polys)
+        area
+
+    getGeoJsonPolygonCoordsArea: (polys) ->
+      area = 0
+      area += @getCoordsArea(polys[0])
+      _.each polys.slice(1), (coords) =>
+        area -= @getCoordsArea(coords)
+      area
+
+    getCoordsArea: (coords) ->
+      unless coords[0] instanceof GeoPoint
+        coords = _.map coords, (coord) -> new GeoPoint(coord)
+      geometry = wkt.openLayersPolygonFromGeoPoints(coords)
       geometry.getGeodesicArea()
 
     getWktCentroid: (wktStr) -> wkt.openLayersGeometryFromWKT(wktStr).getCentroid()

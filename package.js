@@ -44,3 +44,20 @@ Package.onUse(function(api) {
     'src/server.coffee'
   ], 'server');
 });
+
+Package.onTest(function (api) {
+  api.use([
+    'coffeescript',
+    'tinytest',
+    'test-helpers',
+
+    'aramk:utility',
+    'peterellisjones:describe',
+    'urbanetic:atlas-util'
+  ]);
+
+  api.addFiles([
+    'tests/GeometryUtilsSpec.coffee'
+  ]);
+
+});
