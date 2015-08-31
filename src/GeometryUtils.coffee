@@ -123,11 +123,7 @@ WKT.getWKT Meteor.bindEnvironment (wkt) -> requirejs ['atlas/model/GeoPoint'], (
       if wkt.isWKT(str)
         @getWktArea(str)
       else
-        try
-          geometry = JSON.parse(str)
-          @getGeoJsonArea(geometry)
-        catch err
-          Logger.error('Error parsing GeoJSON in getArea()', err)
+        @getGeoJsonArea @_parseJsonMaybe(str)
 
     getWktArea: (wktStr) ->
       # TODO(aramk) This is inaccurate - use UTM
@@ -162,3 +158,25 @@ WKT.getWKT Meteor.bindEnvironment (wkt) -> requirejs ['atlas/model/GeoPoint'], (
     getWktOrC3mls: (geom_2d) ->
       isWKT = wkt.isWKT(geom_2d)
       if isWKT then geom_2d else Files.downloadJson(geom_2d)
+
+    getGeoPoints: (strOrObj) ->
+      if wkt.isWKT(strOrObj)
+        wkt.geoPointsFromWKT(strOrObj)
+      else
+        geometry = @_parseJsonMaybe(strOrObj)
+        coords = geometry.coordinates
+        Objects.traverseValues coords, (value, key, obj) ->
+          return if Types.isNumber(value)
+          if Types.isArray(value) and Types.isNumber(value[0])
+            obj[key] = new GeoPoint(value)
+        coords
+
+    _parseJsonMaybe: (strOrObj) ->
+      if Types.isObjectLiteral(strOrObj)
+        return strOrObj
+      else
+        try
+          JSON.parse(strOrObj)
+        catch err
+          Logger.error('Error parsing JSON', err)
+          throw err
