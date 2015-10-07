@@ -146,7 +146,6 @@ AtlasManager =
     atlas.publish 'camera/zoomTo',
       ids: ids
       callback: (promise) ->
-        console.log('promise', promise)
         df.resolve(promise)
     df.promise
 
