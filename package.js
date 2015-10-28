@@ -11,9 +11,9 @@ Package.onUse(function(api) {
     'coffeescript',
     'underscore',
     'aramk:requirejs@2.1.15',
+    'aramk:utility@0.5.0',
     'aramk:q@1.0.1',
-    'urbanetic:atlas@0.8.1',
-    'urbanetic:utility@1.0.0'
+    'urbanetic:atlas@0.8.1'
   ], ['client', 'server']);
   api.use([
     'urbanetic:atlas-cesium@0.8.1'
@@ -51,9 +51,9 @@ Package.onTest(function (api) {
     'tinytest',
     'test-helpers',
 
+    'aramk:utility',
     'peterellisjones:describe',
-    'urbanetic:atlas-util',
-    'urbanetic:utility@1.0.0'
+    'urbanetic:atlas-util'
   ]);
 
   api.addFiles([
