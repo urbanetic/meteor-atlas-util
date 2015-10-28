@@ -161,7 +161,7 @@ WKT.getWKT Meteor.bindEnvironment (wkt) -> requirejs ['atlas/model/GeoPoint'], (
       isWKT = wkt.isWKT(geom_2d)
       if isWKT then geom_2d else Files.downloadJson(geom_2d)
 
-    getGeoPoints: (strOrObj) ->
+    pointsFromFootprint: (strOrObj) ->
       if wkt.isWKT(strOrObj)
         wkt.geoPointsFromWKT(strOrObj)
       else
@@ -172,6 +172,11 @@ WKT.getWKT Meteor.bindEnvironment (wkt) -> requirejs ['atlas/model/GeoPoint'], (
           if Types.isArray(value) and Types.isNumber(value[0])
             obj[key] = new GeoPoint(value)
         coords
+
+    # Returns a GeoJSON polygon from the given GeoPoint array.
+    geoJsonPolygonFromPoints: (points) ->
+      coords = _.map points, (point) -> point.toArray()
+      {type: 'Polygon', coordinates: [coords]}
 
     _parseJsonMaybe: (strOrObj) ->
       if Types.isObjectLiteral(strOrObj)
