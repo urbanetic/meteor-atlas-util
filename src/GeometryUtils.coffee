@@ -175,7 +175,15 @@ WKT.getWKT Meteor.bindEnvironment (wkt) -> requirejs ['atlas/model/GeoPoint'], (
 
     # Returns a GeoJSON polygon from the given GeoPoint array.
     geoJsonPolygonFromPoints: (points) ->
+      if points.length < 3
+        throw new Error("Cannot create polygon from #{points.length} points")
       coords = _.map points, (point) -> point.toArray()
+      # Remove elevation if possible to save space.
+      hasNoElevation = _.all coords, (coord) -> coord[2] == 0
+      if hasNoElevation then _.each coords, (coord) -> coord.pop()
+      # Ensure polygon is closed.
+      unless _.isEqual _.first(coords), _.last(coords)
+        coords.push _.first(coords)
       {type: 'Polygon', coordinates: [coords]}
 
     _parseJsonMaybe: (strOrObj) ->
