@@ -41,8 +41,10 @@ GeometryUtils =
     collectionId = args.collectionId
     df = Q.defer()
     requirejs ['atlas/model/GeoPoint'], Meteor.bindEnvironment (GeoPoint) =>
-      Files.downloadJson(fileId).then Meteor.bindEnvironment (result) =>
-        df.resolve(@buildGeometryFromC3ml(result, args))
+      Files.downloadJson(fileId).then(
+        Meteor.bindEnvironment (result) => df.resolve(@buildGeometryFromC3ml(result, args))
+        df.reject
+      )
     df.promise
 
   buildGeometryFromC3ml: (doc, args) ->

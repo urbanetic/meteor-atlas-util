@@ -98,7 +98,12 @@ AtlasManager =
   getSelectedFeatureIds: ->
     _.filter @getSelectedEntityIds(), (id) => @getEntity(id).getForm?
 
-  getEntitiesByIds: (ids) -> _.map ids, (id) => @getEntity(id)
+  getEntitiesByIds: (ids) ->
+    entities = []
+    _.each ids, (id) =>
+      entity = @getEntity(id)
+      entities.push(entity) if entity?
+    entities
 
   getEntitiesAt: (point) -> atlas._managers.entity.getAt(point)
 
