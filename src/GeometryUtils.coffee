@@ -145,9 +145,9 @@ _.extend GeometryUtils,
 
   getCoordsArea: (coords) ->
     unless coords[0] instanceof GeoPoint
-      coords = _.map coords, (coord) -> new GeoPoint(coord)
-    geometry = wkt.openLayersPolygonFromGeoPoints(coords)
-    geometry.getGeodesicArea()
+      coords = _.map coords, (coord) -> new GeoPoint(coord).toUtm().coord
+    geometry = wkt.openLayersPolygonFromVertices(coords)
+    geometry.getArea()
 
   getWktCentroid: (wktStr) -> wkt.openLayersGeometryFromWKT(wktStr)?.getCentroid()
 
