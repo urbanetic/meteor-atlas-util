@@ -18,17 +18,16 @@ GeometryUtils =
     if geom_2d
       isWKT = @hasWktGeometry(model)
       if isWKT
-        promise = Q.when @getWktArea(geom_2d)
+        df.resolve @getWktArea(geom_2d)
       else
         # Create a temporary geometry and check the area.
-        promise = @buildGeometryFromFile(geom_2d, {collectionId: id, show: false}).then(
+        @buildGeometryFromFile(geom_2d, {collectionId: id, show: false}).then(
           Meteor.bindEnvironment (geometry) =>
             area = geometry.getArea()
             geometry.remove()
             df.resolve(area)
           df.reject
         )
-        promise.then(df.resolve, df.reject)
     else
       df.resolve(null)
     df.promise
@@ -118,13 +117,7 @@ _.extend GeometryUtils,
     else
       @getGeoJsonArea @_parseJsonMaybe(str)
 
-  getWktArea: (wktStr) ->
-    try
-      # TODO(aramk) This is inaccurate - use UTM
-      geometry = wkt.openLayersGeometryFromWKT(wktStr)
-      geometry?.getGeodesicArea()
-    catch err
-      Logger.error "Failed to calculate WKT area", wktStr, err, err.stack
+  getWktArea: (wktStr) -> @getCoordsArea wkt.geoPointsFromWKT(wktStr)
 
   getGeoJsonArea: (geometry) ->
     type = geometry.type
@@ -144,8 +137,7 @@ _.extend GeometryUtils,
     area
 
   getCoordsArea: (coords) ->
-    unless coords[0] instanceof GeoPoint
-      coords = _.map coords, (coord) -> new GeoPoint(coord).toUtm().coord
+    coords = _.map coords, (coord) -> new GeoPoint(coord).toUtm().coord
     geometry = wkt.openLayersPolygonFromVertices(coords)
     geometry.getArea()
 
