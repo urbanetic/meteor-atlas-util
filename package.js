@@ -6,14 +6,14 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('METEOR@0.9.0');
+  api.versionsFrom('METEOR@1.2.0.1');
   api.use([
     'coffeescript',
     'underscore',
     'aramk:requirejs@2.1.15',
     'aramk:q@1.0.1',
     'urbanetic:atlas@0.8.1',
-    'urbanetic:utility@1.0.1'
+    'urbanetic:utility@1.2.0'
   ], ['client', 'server']);
   api.use([
     'urbanetic:atlas-cesium@0.8.1'
@@ -51,7 +51,7 @@ Package.onTest(function (api) {
     'tinytest',
     'test-helpers',
 
-    'aramk:utility',
+    'urbanetic:utility',
     'peterellisjones:describe',
     'urbanetic:atlas-util'
   ]);
