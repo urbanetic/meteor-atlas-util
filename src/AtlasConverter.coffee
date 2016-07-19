@@ -34,14 +34,16 @@ class AtlasConverter
       try
         geoJson = if Types.isString(vertices) then JSON.parse(vertices) else vertices
         type = geoJson.type
-        isPolygon = type == 'Polygon'
-        isLine = type == 'LineString'
+        isPolygon = type == 'Polygon' || type == 'MultiPolygon'
+        isLine = type == 'LineString' || type == 'MultiLineString'
         isPoint = type == 'Point'
         if isPolygon
           vertices = geoJson.coordinates[0]
           holes = geoJson.coordinates.slice(1)
         else
           vertices = geoJson.coordinates
+        if type == 'MultiLineString'
+          vertices = vertices[0]
 
     if isPolygon
       height = args.height ? 10
