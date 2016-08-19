@@ -152,8 +152,10 @@ _.extend GeometryUtils,
       wkt.geoPointsFromWKT(strOrObj)
     else
       geometry = @_parseJsonMaybe(strOrObj)
-      coords = geometry.coordinates
-      Objects.traverseValues coords, (value, key, obj) ->
+      innerCoords = coords = geometry.coordinates
+      if Types.isArray(coords) and Types.isArray(coords[0]) and Types.isArray(coords[0][0])
+        innerCoords = coords[0]
+      Objects.traverseValues innerCoords, (value, key, obj) ->
         return if Types.isNumber(value)
         if Types.isArray(value) and Types.isNumber(value[0])
           obj[key] = new GeoPoint(value)
