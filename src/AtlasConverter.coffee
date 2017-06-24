@@ -21,6 +21,7 @@ class AtlasConverter
     delete args.style
     
     geoEntity = _.extend({
+      type: 'feature'
       show: true
     }, args)
 
@@ -34,18 +35,24 @@ class AtlasConverter
       try
         geoJson = if Types.isString(vertices) then JSON.parse(vertices) else vertices
         type = geoJson.type
-        isPolygon = type == 'Polygon' || type == 'MultiPolygon'
+        isPolygon = type == 'Polygon'
+        isMultiPolygon = type == 'MultiPolygon'
         isLine = type == 'LineString' || type == 'MultiLineString'
         isPoint = type == 'Point'
         if isPolygon
           vertices = geoJson.coordinates[0]
           holes = geoJson.coordinates.slice(1)
+        else if type == 'MultiLineString'
+          vertices = vertices[0]
         else
           vertices = geoJson.coordinates
-        if type == 'MultiLineString'
-          vertices = vertices[0]
 
-    if isPolygon
+    if isMultiPolygon
+      children = _.map vertices, (coordinates) =>
+        newArgs = {vertices: {type: 'Polygon', coordinates: coordinates}}
+        @toGeoEntityArgs(Setter.merge(Setter.clone(args), newArgs))
+      return children
+    else if isPolygon
       height = args.height ? 10
       geoEntity.polygon = geometry
       geoEntity.displayMode ?= if height > 0 || elevation > 0 then 'extrusion' else 'footprint'
@@ -64,7 +71,7 @@ class AtlasConverter
       geometry.position = vertices
       geoEntity.displayMode = 'point'
     
-    geoEntity
+    return geoEntity
 
   toAtlasStyleArgs: (color, opacity, prefix) ->
     styleArgs = {}
