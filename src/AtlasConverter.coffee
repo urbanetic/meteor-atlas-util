@@ -43,7 +43,7 @@ class AtlasConverter
           vertices = geoJson.coordinates[0]
           holes = geoJson.coordinates.slice(1)
         else if type == 'MultiLineString'
-          vertices = vertices[0]
+          vertices = geoJson.coordinates[0]
         else
           vertices = geoJson.coordinates
 
