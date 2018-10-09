@@ -12,7 +12,7 @@ Package.onUse(function(api) {
     'underscore',
     'aramk:requirejs@2.1.15',
     'aramk:q@1.0.1',
-    'urbanetic:atlas@0.8.1',
+    'urbanetic:atlas@1.0.0',
     'urbanetic:utility@2.0.1'
   ], ['client', 'server']);
   api.use([
