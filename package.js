@@ -1,19 +1,19 @@
 Package.describe({
   name: 'urbanetic:atlas-util',
   summary: 'A wrapper with utilities for using Atlas in Meteor.',
-  version: '0.3.0',
+  version: '1.0.0',
   git: 'https://github.com/Urbanetic/meteor-atlas-util.git'
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('METEOR@1.2.0.1');
+  api.versionsFrom('METEOR@1.6.1');
   api.use([
     'coffeescript',
     'underscore',
     'aramk:requirejs@2.1.15',
     'aramk:q@1.0.1',
     'urbanetic:atlas@0.8.1',
-    'urbanetic:utility@1.2.0'
+    'urbanetic:utility@2.0.1'
   ], ['client', 'server']);
   api.use([
     'urbanetic:atlas-cesium@0.8.1'

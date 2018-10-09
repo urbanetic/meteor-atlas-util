@@ -3,7 +3,7 @@ aramk:requirejs@2.1.15_1
 base64@1.0.3
 blaze@2.1.2
 blaze-tools@1.0.3
-coffeescript@1.0.6
+coffeescript@2.2.1_1
 deps@1.0.7
 ejson@1.0.6
 geojson-utils@1.0.3
