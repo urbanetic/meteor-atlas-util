@@ -112,10 +112,12 @@ _.extend GeometryUtils,
     if geom_2d then wkt.isWKT(geom_2d) else false
 
   getArea: (str) ->
+    return null if !str
+
     if wkt.isWKT(str)
-      @getWktArea(str)
+      return @getWktArea(str)
     else
-      @getGeoJsonArea @_parseJsonMaybe(str)
+      return @getGeoJsonArea @_parseJsonMaybe(str)
 
   getWktArea: (wktStr) -> @getCoordsArea wkt.geoPointsFromWKT(wktStr)
 
